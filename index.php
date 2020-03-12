@@ -1,5 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
 <?php
-    $accessToken = "AJistDzObF11LWkX1HsH+ucNOf/kdD+yf09Lj5Hdah6r/vGv2sw43h1PpiLni4lsnK8ap5LecmsNUsPhVgNpY3PovtKY7r/5z/Y3OyeJrAaGG61dI7pvh/xFhsJvQSOKgjy9fCubUeW4HIRF3d6amgdB04t89/1O/w1cDnyilFU=";//copy Channel access token ตอนที่ตั้งค่ามาใส่
+    $accessToken = "AJistDzObF11LWkX1HsH+ucNOf/kdD+yf09Lj5Hdah6r/vGv2sw43h1PpiLni4lsnK8ap5LecmsNUsPhVgNpY3PovtKY7r/5z/Y3OyeJrAaGG61dI7pvh/xFhsJvQSOKgjy9fCubUeW4HIRF3d6amgdB04t89/1O/w1cDnyilFU=";
     
     $content = file_get_contents('php://input');
     $arrayJson = json_decode($content, true);
@@ -8,15 +16,30 @@
     $arrayHeader[] = "Content-Type: application/json";
     $arrayHeader[] = "Authorization: Bearer {$accessToken}";
     
-    //รับข้อความจากผู้ใช้
+    
     $message = $arrayJson['events'][0]['message']['text'];
-#ตัวอย่าง Message Type "Text"
-    if($message == "สวัสดี"){
+
+    if($message == "บอท"){
         $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
         $arrayPostData['messages'][0]['type'] = "text";
-        $arrayPostData['messages'][0]['text'] = "สวัสดีจ้าาา";
+        $arrayPostData['messages'][0]['text'] = "บอทพร้อมทำงานแล้ว";
         replyMsg($arrayHeader,$arrayPostData);
     }
+    
+    else if($message == "เปิดหลอดไฟ 1"){
+        header('location:https://api.blynk.honey.co.th/p_cGy6rqAtqmddQB2RMMq_cKcT5qe9W-/update/v1?value=1');
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "text";
+        $arrayPostData['messages'][0]['text'] = "โอเค";
+    }
+
+    else if($message == "ปิดหลอดไฟ 1"){
+        header('location:https://api.blynk.honey.co.th/p_cGy6rqAtqmddQB2RMMq_cKcT5qe9W-/update/v1?value=0');
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "text";
+        $arrayPostData['messages'][0]['text'] = "โอเค";
+    }
+
 function replyMsg($arrayHeader,$arrayPostData){
         $strUrl = "https://api.line.me/v2/bot/message/reply";
         $ch = curl_init();
@@ -31,4 +54,6 @@ function replyMsg($arrayHeader,$arrayPostData){
         curl_close ($ch);
     }
    exit;
-?>
+?>    
+</body>
+</html>
