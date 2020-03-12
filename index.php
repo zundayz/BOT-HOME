@@ -26,14 +26,14 @@
         replyMsg($arrayHeader,$arrayPostData);
     }
     
-    else if($message == "เปิดหลอดไฟ 1"){
+    else if($message == "เปิดหลอดไฟ"){
         $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
         $arrayPostData['messages'][0]['type'] = "text";
         $arrayPostData['messages'][0]['text'] = "โอเค";
         replyMsg($arrayHeader,$arrayPostData);
     }
 
-    else if($message == "ปิดหลอดไฟ 1"){
+    else if($message == "ปิดหลอดไฟ"){
         $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
         $arrayPostData['messages'][0]['type'] = "text";
         $arrayPostData['messages'][0]['text'] = "โอเค";
