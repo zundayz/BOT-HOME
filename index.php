@@ -18,11 +18,13 @@
         replyMsg($arrayHeader,$arrayPostData);
     }
     #ตัวอย่าง Message Type "Sticker"
-    if($message == "ปิดหลอดไฟ"){
+    if($message == "เปิดหลอดไฟ"){
         $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
         $arrayPostData['messages'][0]['type'] = "text";
         $arrayPostData['messages'][0]['text'] = "โอเค";
         replyMsg($arrayHeader,$arrayPostData);
+        url = "https://api.blynk.honey.co.th/p_cGy6rqAtqmddQB2RMMq_cKcT5qe9W-/update/v1?value=1";
+        $_GET["url"];
     }
 function replyMsg($arrayHeader,$arrayPostData){
         $strUrl = "https://api.line.me/v2/bot/message/reply";
