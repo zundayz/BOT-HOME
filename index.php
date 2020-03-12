@@ -1,74 +1,71 @@
-<?php 
-	/*Get Data From POST Http Request*/
-	$datas = file_get_contents('php://input');
-	/*Decode Json From LINE Data Body*/
-	$deCode = json_decode($datas,true);
-
-	file_put_contents('log.txt', file_get_contents('php://input') . PHP_EOL, FILE_APPEND);
-
-	$replyToken = $deCode['events'][0]['replyToken'];
-
-	$messages = [];
-	$messages['replyToken'] = $replyToken;
-	$messages['messages'][0] = getFormatTextMessage("สวัสดีจ้าาา");
-
-	$encodeJson = json_encode($messages);
-
-	$LINEDatas['url'] = "https://api.line.me/v2/bot/message/reply";
-  	$LINEDatas['token'] = "AJistDzObF11LWkX1HsH+ucNOf/kdD+yf09Lj5Hdah6r/vGv2sw43h1PpiLni4lsnK8ap5LecmsNUsPhVgNpY3PovtKY7r/5z/Y3OyeJrAaGG61dI7pvh/xFhsJvQSOKgjy9fCubUeW4HIRF3d6amgdB04t89/1O/w1cDnyilFU=";
-
-  	$results = sentMessage($encodeJson,$LINEDatas);
-
-	/*Return HTTP Request 200*/
-	http_response_code(200);
-
-	function getFormatTextMessage($text)
-	{
-		$datas = [];
-		$datas['type'] = 'text';
-		$datas['text'] = $text;
-
-		return $datas;
-	}
-
-	function sentMessage($encodeJson,$datas)
-	{
-		$datasReturn = [];
-		$curl = curl_init();
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => $datas['url'],
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => $encodeJson,
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer ".$datas['token'],
-		    "cache-control: no-cache",
-		    "content-type: application/json; charset=UTF-8",
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		    $datasReturn['result'] = 'E';
-		    $datasReturn['message'] = $err;
-		} else {
-		    if($response == "{}"){
-			$datasReturn['result'] = 'S';
-			$datasReturn['message'] = 'Success';
-		    }else{
-			$datasReturn['result'] = 'E';
-			$datasReturn['message'] = $response;
-		    }
-		}
-
-		return $datasReturn;
-	}
+<?php
+    $accessToken = "AJistDzObF11LWkX1HsH+ucNOf/kdD+yf09Lj5Hdah6r/vGv2sw43h1PpiLni4lsnK8ap5LecmsNUsPhVgNpY3PovtKY7r/5z/Y3OyeJrAaGG61dI7pvh/xFhsJvQSOKgjy9fCubUeW4HIRF3d6amgdB04t89/1O/w1cDnyilFU=";//copy Channel access token ตอนที่ตั้งค่ามาใส่
+    
+    $content = file_get_contents('php://input');
+    $arrayJson = json_decode($content, true);
+    
+    $arrayHeader = array();
+    $arrayHeader[] = "Content-Type: application/json";
+    $arrayHeader[] = "Authorization: Bearer {$accessToken}";
+    
+    //รับข้อความจากผู้ใช้
+    $message = $arrayJson['events'][0]['message']['text'];
+#ตัวอย่าง Message Type "Text"
+    if($message == "สวัสดี"){
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "text";
+        $arrayPostData['messages'][0]['text'] = "สวัสดีจ้าาา";
+        replyMsg($arrayHeader,$arrayPostData);
+    }
+    #ตัวอย่าง Message Type "Sticker"
+    else if($message == "ฝันดี"){
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "sticker";
+        $arrayPostData['messages'][0]['packageId'] = "2";
+        $arrayPostData['messages'][0]['stickerId'] = "46";
+        replyMsg($arrayHeader,$arrayPostData);
+    }
+    #ตัวอย่าง Message Type "Image"
+    else if($message == "รูปน้องแมว"){
+        $image_url = "https://i.pinimg.com/originals/cc/22/d1/cc22d10d9096e70fe3dbe3be2630182b.jpg";
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "image";
+        $arrayPostData['messages'][0]['originalContentUrl'] = $image_url;
+        $arrayPostData['messages'][0]['previewImageUrl'] = $image_url;
+        replyMsg($arrayHeader,$arrayPostData);
+    }
+    #ตัวอย่าง Message Type "Location"
+    else if($message == "พิกัดสยามพารากอน"){
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "location";
+        $arrayPostData['messages'][0]['title'] = "สยามพารากอน";
+        $arrayPostData['messages'][0]['address'] =   "13.7465354,100.532752";
+        $arrayPostData['messages'][0]['latitude'] = "13.7465354";
+        $arrayPostData['messages'][0]['longitude'] = "100.532752";
+        replyMsg($arrayHeader,$arrayPostData);
+    }
+    #ตัวอย่าง Message Type "Text + Sticker ใน 1 ครั้ง"
+    else if($message == "ลาก่อน"){
+        $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
+        $arrayPostData['messages'][0]['type'] = "text";
+        $arrayPostData['messages'][0]['text'] = "อย่าทิ้งกันไป";
+        $arrayPostData['messages'][1]['type'] = "sticker";
+        $arrayPostData['messages'][1]['packageId'] = "1";
+        $arrayPostData['messages'][1]['stickerId'] = "131";
+        replyMsg($arrayHeader,$arrayPostData);
+    }
+function replyMsg($arrayHeader,$arrayPostData){
+        $strUrl = "https://api.line.me/v2/bot/message/reply";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$strUrl);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $arrayHeader);    
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($arrayPostData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        curl_close ($ch);
+    }
+   exit;
 ?>
