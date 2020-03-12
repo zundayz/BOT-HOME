@@ -30,7 +30,6 @@
         $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
         $arrayPostData['messages'][0]['type'] = "text";
         $arrayPostData['messages'][0]['text'] = "โอเค";
-        window.open('https://api.blynk.honey.co.th/p_cGy6rqAtqmddQB2RMMq_cKcT5qe9W-/update/v1?value=1');
         replyMsg($arrayHeader,$arrayPostData);
     }
 
@@ -38,7 +37,6 @@
         $arrayPostData['replyToken'] = $arrayJson['events'][0]['replyToken'];
         $arrayPostData['messages'][0]['type'] = "text";
         $arrayPostData['messages'][0]['text'] = "โอเค";
-        window.open('https://api.blynk.honey.co.th/p_cGy6rqAtqmddQB2RMMq_cKcT5qe9W-/update/v1?value=0');
         replyMsg($arrayHeader,$arrayPostData);
     }
 
